@@ -7,10 +7,12 @@ import java.awt.event.MouseListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 
 import javax.swing.JLabel;
@@ -20,10 +22,14 @@ import Frame.Launch;
 
 
 
+import Frame.MainFrame;
+
 import com.server.ServerMessage;
 
 
 public class FriendListener implements MouseListener{
+
+	
 
 
 	@Override
@@ -31,26 +37,23 @@ public class FriendListener implements MouseListener{
 		// TODO Auto-generated method stub
 		if(e.getClickCount()==2){
 			String name=((JLabel)e.getSource()).getText();
-			ServerMessage send =new ServerMessage();
-			try {
-				int port;
-				if((port=SendGreet(name))>0){
-					
-				Thread chat = new Thread(new ChatFrame(port,Launch.user.getIP()));
+//			ServerMessage send =new ServerMessage();
+//			int chatport;
+//			if(Launch.chatManager.getChat(name)==null)
+			if(Launch.chatManager.Check(name)){
+				ChatFrame chatFrame=new ChatFrame(name);
+				Thread chat = new Thread(chatFrame);
 				chat.start();
-				System.out.print("sent ask for chat to server!!");
-					
-				}
-			} catch (UnknownHostException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				Launch.chatManager.AddChat(chatFrame, name);
+				System.out.println("sent ask for chat to server!!");
+				System.out.println(Launch.user.getChatport());
+				System.out.print(name);						
 			}
-			
-			
-			
-			
-			
-			System.out.print(name);
+			else {
+				System.out.println("you already open one!£¡£¡");
+				
+			}
+
 			
 		}
 		
@@ -86,53 +89,34 @@ public class FriendListener implements MouseListener{
 	}
 
 	
-	private int SendGreet(String name) throws UnknownHostException {
-		// TODO Auto-generated method stub
+	private int SendGreet(String name)  {
 		
-		int chatport=0;
+		int port=Launch.user.getChatport();
+  			 
 		try {
-			String ip = Launch.user.getIP();
+			
+			ObjectOutputStream out=new ObjectOutputStream(Launch.cssocket.getOutputStream());
+			
+			ServerMessage sm = new ServerMessage();
 		
-			int sendport = Launch.user.getCsport();
-			 chatport = Launch.user.getChatport();
+			sm.setChatName(name);
+			sm.setIP(Launch.user.getIP());
+			sm.setType(2);
+			sm.setUserId(Launch.user.getUserId());
 			
-			DatagramSocket udps = new DatagramSocket();	
-			ServerMessage sender = new ServerMessage();
-			byte[] by=new byte[1024*1024];
+			sm.setChatPort(port);
+			out.writeObject(sm);
+			System.out.println("sendGreet over!!!");
 			
-			sender.setIP(ip);
-			sender.setType(1);
-			sender.setChatPort(chatport);
-			sender.setUserId(Launch.user.getUserId());
-			sender.setChatName(name);
-			
-			ByteArrayOutputStream bs=new ByteArrayOutputStream();
-            ObjectOutputStream bo=new ObjectOutputStream(bs);
-            bo.writeObject(sender);
-            by=bs.toByteArray();
-            DatagramPacket data=new DatagramPacket(by,by.length,new InetSocketAddress("127.0.0.1", 2555) );
-            udps.send(data);
-            udps.close();
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return chatport;
-
+		
+		return port;
+		
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }

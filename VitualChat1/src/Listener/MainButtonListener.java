@@ -2,9 +2,16 @@ package Listener;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import Frame.Launch;
 
 public class MainButtonListener implements MouseListener{
 
@@ -31,13 +38,42 @@ public class MainButtonListener implements MouseListener{
 			
 		}
 		else if(e.getSource()==startchat){
+		  
+		  
+		  
+		  
+		  
 			
 		}
 		else if(e.getSource()==set){
 			
 		}
 		else if(e.getSource()==exit){
-			System.exit(0);
+			
+			try {
+
+				DataOutputStream out=new DataOutputStream(Launch.cssocket.getOutputStream());
+				JSONObject mes=new JSONObject();
+	            mes.put("type", "0");
+				out.writeUTF(mes.toString());
+				out.close();
+				Launch.cssocket.close();
+				if(Launch.cssocket.isClosed()){
+					System.out.println("real is closed");
+				}
+				Thread.sleep(500);
+				System.exit(0);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 		}
 		
 	}
@@ -164,8 +200,7 @@ public class MainButtonListener implements MouseListener{
 			
 			jb1 = (JButton)e.getSource();
 			jb1.setIcon(new ImageIcon("img/exit_small.png"));
-		}
-		
+		}	
 	}
 
 }

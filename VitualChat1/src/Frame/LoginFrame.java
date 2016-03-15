@@ -117,8 +117,7 @@ public class LoginFrame extends JFrame implements Runnable {
 		this.setResizable(false);
 		while(true){
 		if(loginListener.state()){
-			this.dispose();
-			
+			this.setVisible(false);		
 		}
 		}
 		

@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Socket;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,6 +24,9 @@ public class FriendList extends JPanel implements ActionListener{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private Socket socket;
+	
 	JButton friend =new JButton("好友列表");
 	JButton blacklist =new JButton("黑名单");
 	JButton stranger = new JButton("陌生人");
@@ -57,8 +61,6 @@ public class FriendList extends JPanel implements ActionListener{
 		JLabel [] jlbfriend = new JLabel [fi.getNums()];
 		ImageIcon[] imgs=new ImageIcon[fi.getNums()];
 		
-
-		
 		friend.setPreferredSize(new Dimension(190,25));
 		friend.setOpaque(false);
 		friend.setBorder(null);
@@ -88,8 +90,7 @@ public class FriendList extends JPanel implements ActionListener{
 		jp2.setLayout(new GridLayout(100,1,4,4));
 		jp2.setOpaque(false);
 		jp2.setBorder(null);
-		
-		
+
 		
 		for(int i=0;i<fi.getNums();i++){
 			 imgs[i]=new ImageIcon("img/"+i+".jpg");
@@ -100,7 +101,7 @@ public class FriendList extends JPanel implements ActionListener{
 		}
 		
 		JScrollPane jsp= new JScrollPane(jp2);
-				
+		
 		jsp.setPreferredSize(new Dimension(200,380));
 		jsp.getViewport().setOpaque(false);
 		jsp.setOpaque(false);
